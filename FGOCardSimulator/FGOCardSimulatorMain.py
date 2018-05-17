@@ -1,19 +1,38 @@
-#coding=utf-8
+# -*- coding:utf-8 -*-
 from FGOCardLottery import *
+from FGODataLoader import *
 
 def printHelpDocument():
-    print("指令说明:");
-    print(" 1                 - 单抽抽卡");
-    print(" 10                - 十连抽卡");
-    print(" a1                - 模拟1000次 单抽方式");
-    print(" a01               - 模拟1000次 10连方式");
-    print(" statistics/stat/s - 查看历史抽卡统计信息");
-    print(" r                 - 重置统计信息");
-    print(" exit/e            - 退出程序");
+    print("指令说明:")
+    print(" 1                 - 单抽抽卡")
+    print(" 10                - 十连抽卡")
+    print(" a1                - 模拟1000次 单抽方式")
+    print(" a01               - 模拟1000次 10连方式")
+    print(" statistics/stat/s - 查看历史抽卡统计信息")
+    print(" r                 - 重置统计信息")
+    print(" exit/e            - 退出程序")
     return
 
+def sortedDictKeys(dict):
+    keys = dict.keys()
+    keys.sort()
+    rev = {}
+    for key in keys:
+        rev[key] = dict[key]
+
+    return rev
+
 if( __name__ == "__main__"):
-    lottery = FGOCardLottery()
+    #load data
+    heroDataLoader = FGODataLoader()
+    heroDataMap = heroDataLoader.loadHeroObjects()
+    mycodeDataMap = heroDataLoader.loadMysticCodeObjects()
+    #heroDataLoader.printHeroStatistics()
+    print('')
+
+    # draw card
+    lottery = FGOCardLottery(heroDataMap, mycodeDataMap)
+    print('')
     while True:
         # exit when input 'e'
         str = raw_input("Please input command: (input 'help' for help or 'exit' for exiting)\n")
@@ -24,7 +43,7 @@ if( __name__ == "__main__"):
         elif (str == '10'): # 10s-draw
             lottery.drawTenCards()
         elif (str.lower() == 'help' or str.lower() == 'h'):
-            printHelpDocument();
+            printHelpDocument()
         elif (str.lower() == 'statistics' or str.lower() == 'stat' or str.lower() == 's'): # check statistics
             lottery.printStatisitcs()
         elif (str.lower() == 'a1'): # simulate 1000 times with single-draw
@@ -34,6 +53,6 @@ if( __name__ == "__main__"):
             for i in range(100):
                 lottery.drawTenCards()
         elif (str.lower() == 'r'): # reset statistics record
-            lottery = FGOCardLottery()
+            lottery = FGOCardLottery(heroDataMap, mycodeDataMap)
         else:
             print('Wrong input, please try again.')
